@@ -1,0 +1,5 @@
+package com.app.commerce.dto;
+
+public class LoginRequest {
+
+}

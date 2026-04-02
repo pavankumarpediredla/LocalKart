@@ -1,0 +1,25 @@
+package com.app.commerce.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.app.commerce.dto.LoginRequest;
+
+@RestController
+@RequestMapping("/login")
+@CrossOrigin(origins="*")
+public class LoginController {
+	
+	@PostMapping
+	public ResponseEntity<String> auth(@RequestBody LoginRequest request) {
+		
+		if(request.getUserName().equalsIgnoreCase("admin") && request.getPassword().equals("1234")) {
+			return ResponseEntity.ok("logged in! thankyou");
+		}
+		  return ResponseEntity.status(401).body("Invalid credentials");
+	}
+
+}
