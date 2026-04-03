@@ -1,2 +1,3 @@
-2026/04/02-15:55:34.385 1070 Creating DB C:\Users\ATPLD08\e-commerce\backend\commerce\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Session Storage since it was missing.
-2026/04/02-15:55:34.409 1070 Reusing MANIFEST C:\Users\ATPLD08\e-commerce\backend\commerce\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Session Storage/MANIFEST-000001
+2026/04/03-12:49:52.157 4764 Reusing MANIFEST C:\Users\ATPLD08\e-commerce\backend\commerce\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Session Storage/MANIFEST-000001
+2026/04/03-12:49:52.169 4764 Recovering log #3
+2026/04/03-12:49:52.172 4764 Reusing old log C:\Users\ATPLD08\e-commerce\backend\commerce\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Session Storage/000003.log 

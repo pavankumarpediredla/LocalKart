@@ -1,2 +1,3 @@
-2026/04/02-15:44:43.265 1070 Creating DB C:\Users\ATPLD08\e-commerce\backend\commerce\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb since it was missing.
-2026/04/02-15:44:43.337 1070 Reusing MANIFEST C:\Users\ATPLD08\e-commerce\backend\commerce\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
+2026/04/03-10:08:52.611 4764 Reusing MANIFEST C:\Users\ATPLD08\e-commerce\backend\commerce\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
+2026/04/03-10:08:52.626 4764 Recovering log #3
+2026/04/03-10:08:52.634 4764 Reusing old log C:\Users\ATPLD08\e-commerce\backend\commerce\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/000003.log 
