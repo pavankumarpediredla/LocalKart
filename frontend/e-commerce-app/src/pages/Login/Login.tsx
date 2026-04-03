@@ -56,26 +56,25 @@ const Login = () => {
           <div className="hidden flex-col justify-between gap-8 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.28),_transparent_55%),linear-gradient(135deg,_rgba(15,23,42,0.96),_rgba(8,15,30,0.92))] p-10 xl:flex">
             <div>
               <p className="text-sm font-medium uppercase tracking-[0.35em] text-cyan-300/80">
-                E-Commerce Admin
+                E-Commerce Customer
               </p>
               <h1 className="mt-6 max-w-md text-5xl font-semibold leading-tight text-white">
-                Sign in to manage orders, products, and customers.
+                Sign in to explore products, track orders, and manage your account.
               </h1>
               <p className="mt-5 max-w-lg text-base leading-7 text-slate-300">
-                A focused login experience with a clean layout, strong contrast,
-                and subtle depth.
+                A focused customer login experience with product discovery and account access after sign-in.
               </p>
             </div>
 
-            <div className="grid gap-4 text-sm text-slate-300">
+              <div className="grid gap-4 text-sm text-slate-300">
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                Fast access to your dashboard
+                Fast access to your shopping dashboard
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                Secure POST submission flow
+                Search products and manage your orders
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                Tailwind-powered responsive UI
+                Tailwind-powered responsive customer UI
               </div>
             </div>
           </div>
