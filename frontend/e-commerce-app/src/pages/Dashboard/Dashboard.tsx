@@ -78,6 +78,8 @@ const Dashboard = () => {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
   const handleLogout = () => {
+    sessionStorage.removeItem("userRole");
+    sessionStorage.removeItem("username");
     setIsLogoutDialogOpen(false);
     setIsAccountMenuOpen(false);
     navigate("/login");

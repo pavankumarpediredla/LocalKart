@@ -4,6 +4,46 @@ import { useNavigate } from "react-router-dom";
 const LOGIN_API_URL =
   import.meta.env.VITE_LOGIN_API_URL ?? "http://localhost:8080/login";
 
+const normalizeRole = (responseData: unknown) => {
+  if (!responseData || typeof responseData !== "object") {
+    return "customer";
+  }
+
+  const data = responseData as {
+    role?: string;
+    userRole?: string;
+    user?: { role?: string };
+    data?: { role?: string };
+    authorities?: Array<string | { authority?: string }>;
+  };
+
+  const directRole =
+    data.role ??
+    data.userRole ??
+    data.user?.role ??
+    data.data?.role;
+
+  if (typeof directRole === "string" && directRole.trim().length > 0) {
+    return directRole.trim().toLowerCase();
+  }
+
+  const authority = data.authorities?.find((entry) =>
+    typeof entry === "string"
+      ? entry.trim().length > 0
+      : typeof entry?.authority === "string" && entry.authority.trim().length > 0,
+  );
+
+  if (typeof authority === "string") {
+    return authority.toLowerCase().replace("role_", "");
+  }
+
+  if (authority && typeof authority.authority === "string") {
+    return authority.authority.toLowerCase().replace("role_", "");
+  }
+
+  return "customer";
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const [username, setUserName] = useState<string>("");
@@ -39,6 +79,25 @@ const Login = () => {
       }
 
       setSuccessMessage(responseData?.message ?? "Login successful.");
+      const resolvedRole = normalizeRole(responseData);
+      sessionStorage.setItem("userRole", resolvedRole);
+      sessionStorage.setItem("username", username);
+
+      if (resolvedRole === "admin") {
+        navigate("/admin/dashboard");
+        return;
+      }
+
+      if (resolvedRole === "seller") {
+        navigate("/seller/dashboard");
+        return;
+      }
+
+      if (resolvedRole === "support") {
+        navigate("/admin/support");
+        return;
+      }
+
       navigate("/dashboard");
     } catch (error) {
       const message =
