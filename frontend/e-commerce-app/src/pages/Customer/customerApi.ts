@@ -115,6 +115,22 @@ export const removeFromCart = async (productId: number) => {
   return (await response.json()) as CartItem[];
 };
 
+export const clearCart = async () => {
+  const response = await fetch(CUSTOMER_CART_API_URL, {
+    method: "DELETE",
+    headers: {
+      "X-Username": getUsername(),
+    },
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(data?.message ?? "Failed to clear cart.");
+  }
+
+  return (await response.json()) as CartItem[];
+};
+
 export const fetchWishlist = async () => {
   const response = await fetch(CUSTOMER_WISHLIST_API_URL, {
     headers: {

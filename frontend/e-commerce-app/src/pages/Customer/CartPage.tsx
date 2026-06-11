@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   checkoutOrder,
+  clearCart,
   fetchCart,
   removeFromCart,
   setCartQuantity,
@@ -53,6 +54,15 @@ const CartPage = () => {
       setItems(await removeFromCart(productId));
     } catch (removeError) {
       setError(removeError instanceof Error ? removeError.message : "Failed to remove item.");
+    }
+  };
+
+  const handleClearCart = async () => {
+    try {
+      setError("");
+      setItems(await clearCart());
+    } catch (clearError) {
+      setError(clearError instanceof Error ? clearError.message : "Failed to clear cart.");
     }
   };
 
@@ -110,6 +120,14 @@ const CartPage = () => {
             >
               View orders
             </Link>
+            <button
+              type="button"
+              onClick={() => void handleClearCart()}
+              disabled={items.length === 0}
+              className="border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Clear cart
+            </button>
           </div>
         </div>
 

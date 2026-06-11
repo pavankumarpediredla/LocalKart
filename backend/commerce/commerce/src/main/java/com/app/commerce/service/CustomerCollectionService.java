@@ -74,6 +74,12 @@ public class CustomerCollectionService {
 		return getCart(username);
 	}
 
+	public List<CartItemResponse> clearCart(String username) {
+		validateUsername(username);
+		cartItemRepository.deleteByUserUsernameIgnoreCase(username);
+		return getCart(username);
+	}
+
 	public List<WishlistItemResponse> addToWishlist(String username, WishlistItemRequest request) {
 		User user = getActiveUser(username);
 		Product product = getProduct(request.getProductId());

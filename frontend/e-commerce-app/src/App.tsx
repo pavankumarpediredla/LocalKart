@@ -25,6 +25,7 @@ import WishlistPage from "./pages/Customer/WishlistPage";
 import ProductDetailsPage from "./pages/Customer/ProductDetailsPage";
 import OrdersPage from "./pages/Customer/OrdersPage";
 import { RedirectIfAuthenticated, RequireAuth } from "./components/RouteGuards";
+import NotFoundPage from "./pages/NotFound/NotFoundPage";
 
 function App() {
   return (
@@ -110,7 +111,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <RequireAuth allowedRoles={["admin"]}>
+            <RequireAuth allowedRoles={["admin", "support"]}>
               <AdminDashboard />
             </RequireAuth>
           }
@@ -124,6 +125,7 @@ function App() {
           <Route path="support" element={<AdminSupportPage />} />
           <Route path="account" element={<AdminAccountPage />} />
         </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );

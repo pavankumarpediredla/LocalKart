@@ -45,4 +45,9 @@ public class CartController {
 			@PathVariable Long productId) {
 		return customerCollectionService.removeFromCart(username, productId);
 	}
+
+	@DeleteMapping
+	public List<CartItemResponse> clearCart(@RequestHeader("X-Username") String username) {
+		return customerCollectionService.clearCart(username);
+	}
 }

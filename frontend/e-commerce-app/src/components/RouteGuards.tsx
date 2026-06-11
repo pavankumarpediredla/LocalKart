@@ -35,4 +35,3 @@ export const RedirectIfAuthenticated = ({ children }: { children: ReactNode }) =
 
   return <>{children}</>;
 };
-

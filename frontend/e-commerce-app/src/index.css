@@ -121,7 +121,7 @@
   * {
     @apply border-border outline-ring/50;
   }
-body {
+  body {
     @apply bg-background text-foreground;
     background-image:
       radial-gradient(circle at top left, rgba(20, 184, 166, 0.12), transparent 28%),
@@ -130,5 +130,20 @@ body {
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  @keyframes marquee-x {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee-x {
+    animation: marquee-x 26s linear infinite;
   }
 }
