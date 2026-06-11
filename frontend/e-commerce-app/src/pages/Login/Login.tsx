@@ -1,10 +1,15 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { Lock, Search, ShoppingCart, User } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setAuth } from "../../store/substores/AuthStore";
+import { getAuthSession, getRoleHomePath, saveAuthSession, type AuthRole } from "../../lib/authSession";
+import BrandMark from "../../components/BrandMark";
 
 const LOGIN_API_URL =
   import.meta.env.VITE_LOGIN_API_URL ?? "http://localhost:8080/login";
 
-const normalizeRole = (responseData: unknown) => {
+const normalizeRole = (responseData: unknown): AuthRole => {
   if (!responseData || typeof responseData !== "object") {
     return "customer";
   }
@@ -17,14 +22,10 @@ const normalizeRole = (responseData: unknown) => {
     authorities?: Array<string | { authority?: string }>;
   };
 
-  const directRole =
-    data.role ??
-    data.userRole ??
-    data.user?.role ??
-    data.data?.role;
+  const directRole = data.role ?? data.userRole ?? data.user?.role ?? data.data?.role;
 
   if (typeof directRole === "string" && directRole.trim().length > 0) {
-    return directRole.trim().toLowerCase();
+    return directRole.trim().toLowerCase() as AuthRole;
   }
 
   const authority = data.authorities?.find((entry) =>
@@ -34,11 +35,11 @@ const normalizeRole = (responseData: unknown) => {
   );
 
   if (typeof authority === "string") {
-    return authority.toLowerCase().replace("role_", "");
+    return authority.toLowerCase().replace("role_", "") as AuthRole;
   }
 
   if (authority && typeof authority.authority === "string") {
-    return authority.authority.toLowerCase().replace("role_", "");
+    return authority.authority.toLowerCase().replace("role_", "") as AuthRole;
   }
 
   return "customer";
@@ -46,11 +47,19 @@ const normalizeRole = (responseData: unknown) => {
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const session = getAuthSession();
   const [username, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
+
+  useEffect(() => {
+    if (session.isAuthenticated) {
+      navigate(getRoleHomePath(session.role), { replace: true });
+    }
+  }, [navigate, session.isAuthenticated, session.role]);
 
   const submitLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -73,35 +82,17 @@ const Login = () => {
       const responseData = await response.json().catch(() => null);
 
       if (!response.ok) {
-        throw new Error(
-          responseData?.message ?? "Login failed. Please try again.",
-        );
+        throw new Error(responseData?.message ?? "Login failed. Please try again.");
       }
 
       setSuccessMessage(responseData?.message ?? "Login successful.");
       const resolvedRole = normalizeRole(responseData);
-      sessionStorage.setItem("userRole", resolvedRole);
-      sessionStorage.setItem("username", username);
+      saveAuthSession(username, resolvedRole);
+      dispatch(setAuth({ username, role: resolvedRole }));
 
-      if (resolvedRole === "admin") {
-        navigate("/admin/dashboard");
-        return;
-      }
-
-      if (resolvedRole === "seller") {
-        navigate("/seller/dashboard");
-        return;
-      }
-
-      if (resolvedRole === "support") {
-        navigate("/admin/support");
-        return;
-      }
-
-      navigate("/dashboard");
+      navigate(getRoleHomePath(resolvedRole), { replace: true });
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Something went wrong.";
+      const message = error instanceof Error ? error.message : "Something went wrong.";
       setErrorMessage(message);
     } finally {
       setIsLoading(false);
@@ -109,104 +100,98 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 px-4 py-10 text-slate-100 sm:px-6 lg:px-8">
-      <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-6xl items-center justify-center">
-        <div className="grid w-full overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-cyan-950/30 backdrop-blur xl:grid-cols-2">
-          <div className="hidden flex-col justify-between gap-8 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.28),_transparent_55%),linear-gradient(135deg,_rgba(15,23,42,0.96),_rgba(8,15,30,0.92))] p-10 xl:flex">
-            <div>
-              <p className="text-sm font-medium uppercase tracking-[0.35em] text-cyan-300/80">
-                E-Commerce Customer
-              </p>
-              <h1 className="mt-6 max-w-md text-5xl font-semibold leading-tight text-white">
-                Sign in to explore products, track orders, and manage your account.
-              </h1>
-              <p className="mt-5 max-w-lg text-base leading-7 text-slate-300">
-                A focused customer login experience with product discovery and account access after sign-in.
-              </p>
-            </div>
-
-              <div className="grid gap-4 text-sm text-slate-300">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                Fast access to your shopping dashboard
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                Search products and manage your orders
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                Tailwind-powered responsive customer UI
-              </div>
-            </div>
+    <div className="min-h-screen bg-[#f4f7f8] text-[#0f172a]">
+      <header className="border-b border-teal-950/10 bg-white/80 text-slate-900 shadow-sm backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
+          <BrandMark />
+          <div className="relative hidden flex-1 md:block">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-teal-600" />
+            <input
+              disabled
+              placeholder="Search for products, brands and more"
+              className="h-10 w-full rounded-sm bg-white pl-12 pr-4 text-sm text-slate-500 shadow outline-none"
+            />
           </div>
+          <div className="ml-auto inline-flex items-center gap-2 text-sm font-semibold text-teal-700">
+            <ShoppingCart className="h-5 w-5" />
+            Cart
+          </div>
+        </div>
+      </header>
 
-          <div className="flex items-center justify-center p-6 sm:p-10">
-            <form
-              onSubmit={submitLogin}
-              className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-950/70 p-8 shadow-xl shadow-slate-950/40"
-            >
-              <div className="mb-8">
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-                  Welcome back
-                </p>
-                <h2 className="mt-3 text-3xl font-semibold text-white">
-                  Log in to your account
-                </h2>
-                <p className="mt-2 text-sm leading-6 text-slate-400">
-                  Enter your credentials to continue.
-                </p>
-              </div>
+      <main className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-5xl items-center gap-0 px-4 py-8 lg:grid-cols-[360px_minmax(0,1fr)]">
+        <section className="h-full bg-[linear-gradient(160deg,#0f766e_0%,#14b8a6_55%,#f59e0b_100%)] px-8 py-10 text-white shadow-sm">
+          <h1 className="text-3xl font-semibold leading-tight">Login</h1>
+          <p className="mt-4 text-lg leading-8 text-blue-50">
+            Get access to your orders, wishlist and personalized recommendations.
+          </p>
+          <div className="mt-12 grid gap-4 text-sm text-blue-50">
+            <div className="border border-white/20 bg-white/10 p-4">Neighborhood storefront experience</div>
+            <div className="border border-white/20 bg-white/10 p-4">Cart, wishlist and order tracking</div>
+            <div className="border border-white/20 bg-white/10 p-4">Seller and admin role redirects</div>
+          </div>
+        </section>
 
-              <div className="space-y-5">
-                <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-slate-200">
-                    Username
-                  </span>
+        <section className="bg-white px-6 py-10 shadow-sm sm:px-10">
+          <form onSubmit={submitLogin} className="mx-auto max-w-md">
+            <div className="mb-8">
+              <h2 className="text-2xl font-semibold text-slate-900">Sign in to continue</h2>
+              <p className="mt-2 text-sm text-slate-500">Use your existing account credentials.</p>
+            </div>
+
+            <div className="space-y-5">
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-slate-700">Username</span>
+                <div className="relative">
+                  <User className="absolute left-0 top-1/2 h-5 w-5 -translate-y-1/2 text-teal-600" />
                   <input
                     value={username}
                     onChange={(e) => setUserName(e.target.value)}
                     autoComplete="username"
-                    placeholder="Enter your username"
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
+                    placeholder="Enter username"
+                    className="h-12 w-full border-0 border-b border-slate-300 pl-8 text-sm outline-none focus:border-teal-600"
                   />
-                </label>
+                </div>
+              </label>
 
-                <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-slate-200">
-                    Password
-                  </span>
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-slate-700">Password</span>
+                <div className="relative">
+                  <Lock className="absolute left-0 top-1/2 h-5 w-5 -translate-y-1/2 text-teal-600" />
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="current-password"
-                    placeholder="Enter your password"
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
+                    placeholder="Enter password"
+                    className="h-12 w-full border-0 border-b border-slate-300 pl-8 text-sm outline-none focus:border-teal-600"
                   />
-                </label>
+                </div>
+              </label>
+            </div>
+
+            {errorMessage ? (
+              <div className="mt-5 border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                {errorMessage}
               </div>
+            ) : null}
 
-              {errorMessage ? (
-                <div className="mt-5 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-                  {errorMessage}
-                </div>
-              ) : null}
+            {successMessage ? (
+              <div className="mt-5 border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                {successMessage}
+              </div>
+            ) : null}
 
-              {successMessage ? (
-                <div className="mt-5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
-                  {successMessage}
-                </div>
-              ) : null}
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="mt-7 inline-flex w-full items-center justify-center rounded-2xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isLoading ? "Signing in..." : "Sign in"}
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="mt-8 inline-flex h-12 w-full items-center justify-center bg-[linear-gradient(135deg,#0f766e_0%,#14b8a6_60%,#f59e0b_100%)] px-4 text-sm font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isLoading ? "Signing in..." : "Login"}
+            </button>
+          </form>
+        </section>
+      </main>
     </div>
   );
 };

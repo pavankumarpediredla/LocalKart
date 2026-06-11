@@ -6,6 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import com.app.commerce.bootstrap.AdminBootstrapProperties;
 
 @Configuration
-@EnableConfigurationProperties({ FirebaseStorageProperties.class, AdminBootstrapProperties.class })
+@EnableConfigurationProperties({ FirebaseStorageProperties.class, LocalStorageProperties.class, AdminBootstrapProperties.class })
 public class AppPropertiesConfig {
 }

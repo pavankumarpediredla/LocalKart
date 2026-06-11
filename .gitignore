@@ -1,0 +1,8 @@
+/budget-tracker/
+
+.idea/
+frontend/node_modules/
+frontend/dist/
+backend/target/
+.env
+*.log

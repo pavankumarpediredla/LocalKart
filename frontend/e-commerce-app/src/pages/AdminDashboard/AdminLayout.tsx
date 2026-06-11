@@ -13,6 +13,8 @@ import {
   X,
 } from "lucide-react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import BrandMark from "../../components/BrandMark";
+import { clearAuthSession } from "../../lib/authSession";
 
 const navItems = [
   { label: "Overview", to: "/admin/dashboard", icon: LayoutDashboard },
@@ -38,8 +40,7 @@ const AdminLayout = () => {
     "Admin";
 
   const handleLogout = () => {
-    sessionStorage.removeItem("userRole");
-    sessionStorage.removeItem("username");
+    clearAuthSession();
     setIsLogoutDialogOpen(false);
     setIsAccountMenuOpen(false);
     setIsMobileMenuOpen(false);
@@ -54,13 +55,11 @@ const AdminLayout = () => {
   const sidebarContent = (
     <>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-300 text-lg font-bold text-slate-950">
-            EC
-          </div>
+          <div className="flex items-center gap-3">
+          <BrandMark compact />
           {isExpanded ? (
             <div>
-              <p className="text-lg font-semibold">EasyCart Admin</p>
+              <p className="text-lg font-semibold">Localkart Admin</p>
               <p className="text-sm text-slate-400">Operations workspace</p>
             </div>
           ) : null}
@@ -86,8 +85,8 @@ const AdminLayout = () => {
               onClick={closeMenus}
               className={({ isActive }) =>
                 `flex items-center rounded-2xl px-3 py-3 text-sm font-medium transition ${
-                  isActive
-                    ? "bg-cyan-300 text-slate-950"
+                    isActive
+                    ? "bg-teal-300 text-slate-950"
                     : "text-slate-300 hover:bg-white/5 hover:text-white"
                 } ${isExpanded ? "justify-between" : "justify-center lg:justify-center"}`
               }
@@ -111,26 +110,26 @@ const AdminLayout = () => {
         })}
       </nav>
 
-      <div className="mt-8 rounded-[1.75rem] border border-cyan-400/20 bg-gradient-to-br from-cyan-500/15 to-sky-500/5 p-5">
+      <div className="mt-8 rounded-[1.75rem] border border-teal-400/20 bg-gradient-to-br from-teal-500/15 to-amber-500/5 p-5">
         {isExpanded ? (
           <>
-            <p className="text-sm font-medium text-cyan-200">Admin summary</p>
+            <p className="text-sm font-medium text-teal-200">Admin summary</p>
             <p className="mt-3 text-3xl font-semibold">Live</p>
             <p className="mt-1 text-sm text-slate-300">
               Use the routed side menu to manage each admin area.
             </p>
           </>
         ) : (
-          <div className="flex justify-center text-cyan-200">
-            <Users size={20} />
-          </div>
-        )}
-      </div>
+            <div className="flex justify-center text-teal-200">
+              <Users size={20} />
+            </div>
+          )}
+        </div>
     </>
   );
 
   return (
-    <div className="min-h-screen bg-[#08111f] text-slate-100">
+    <div className="min-h-screen bg-[#07131b] text-slate-100">
       <div className="mx-auto flex min-h-screen max-w-[1600px]">
         {isMobileMenuOpen ? (
           <button
@@ -142,7 +141,7 @@ const AdminLayout = () => {
         ) : null}
 
         <aside
-          className={`fixed inset-y-0 left-0 z-40 border-r border-white/10 bg-[#06101d] px-4 py-6 transition-all duration-300 lg:hidden ${
+          className={`fixed inset-y-0 left-0 z-40 border-r border-white/10 bg-[#07131b] px-4 py-6 transition-all duration-300 lg:hidden ${
             isExpanded ? "w-72" : "w-24"
           } ${
             isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -152,7 +151,7 @@ const AdminLayout = () => {
         </aside>
 
         <aside
-          className={`hidden border-r border-white/10 bg-[#06101d] px-4 py-6 lg:block ${
+          className={`hidden border-r border-white/10 bg-[#07131b] px-4 py-6 lg:block ${
             isExpanded ? "w-72" : "w-24"
           }`}
         >
@@ -163,7 +162,7 @@ const AdminLayout = () => {
           <header className="rounded-[2rem] border border-white/10 bg-white/5 px-4 py-4 shadow-2xl shadow-slate-950/20 backdrop-blur sm:px-6 sm:py-5">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">Admin Console</p>
+                <p className="text-sm uppercase tracking-[0.35em] text-teal-300">Admin Console</p>
                 <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">{pageTitle}</h1>
                 <p className="mt-2 text-sm text-slate-400">
                   Manage users, customers, support, and analytics from separate admin pages.

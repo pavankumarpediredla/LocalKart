@@ -14,6 +14,8 @@ import {
   X,
 } from "lucide-react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import BrandMark from "../../components/BrandMark";
+import { clearAuthSession } from "../../lib/authSession";
 
 const navItems = [
   { label: "Dashboard", to: "/seller/dashboard", icon: LayoutDashboard },
@@ -41,8 +43,7 @@ const SellerLayout = () => {
     "Seller Portal";
 
   const handleLogout = () => {
-    sessionStorage.removeItem("userRole");
-    sessionStorage.removeItem("username");
+    clearAuthSession();
     navigate("/login");
   };
 
@@ -51,13 +52,11 @@ const SellerLayout = () => {
   const sidebarContent = (
     <>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-300 text-lg font-bold text-slate-950">
-            SP
-          </div>
+          <div className="flex items-center gap-3">
+          <BrandMark compact />
           {isExpanded ? (
             <div>
-              <p className="text-lg font-semibold">Seller Portal</p>
+              <p className="text-lg font-semibold">Localkart Seller</p>
               <p className="text-sm text-slate-400">Store operations</p>
             </div>
           ) : null}
@@ -82,8 +81,8 @@ const SellerLayout = () => {
               onClick={closeMobileMenu}
               className={({ isActive }) =>
                 `flex items-center rounded-2xl px-3 py-3 text-sm font-medium transition ${
-                  isActive
-                    ? "bg-emerald-300 text-slate-950"
+                    isActive
+                    ? "bg-teal-300 text-slate-950"
                     : "text-slate-300 hover:bg-white/5 hover:text-white"
                 } ${isExpanded ? "justify-between" : "justify-center"}`
               }
@@ -97,26 +96,26 @@ const SellerLayout = () => {
         })}
       </nav>
 
-      <div className="mt-8 rounded-[1.75rem] border border-emerald-400/20 bg-gradient-to-br from-emerald-500/15 to-lime-500/5 p-5">
+      <div className="mt-8 rounded-[1.75rem] border border-teal-400/20 bg-gradient-to-br from-teal-500/15 to-amber-500/5 p-5">
         {isExpanded ? (
           <>
-            <p className="text-sm font-medium text-emerald-200">Seller summary</p>
+            <p className="text-sm font-medium text-teal-200">Seller summary</p>
             <p className="mt-3 text-3xl font-semibold">Growth</p>
             <p className="mt-1 text-sm text-slate-300">
               Manage catalog, pricing, offers, orders, and payouts from one workspace.
             </p>
           </>
         ) : (
-          <div className="flex justify-center text-emerald-200">
-            <WalletCards size={20} />
-          </div>
-        )}
-      </div>
+            <div className="flex justify-center text-teal-200">
+              <WalletCards size={20} />
+            </div>
+          )}
+        </div>
     </>
   );
 
   return (
-    <div className="min-h-screen bg-[#0b1220] text-slate-100">
+    <div className="min-h-screen bg-[#07131b] text-slate-100">
       <div className="mx-auto flex min-h-screen max-w-[1600px]">
         {isMobileMenuOpen ? (
           <button
@@ -128,7 +127,7 @@ const SellerLayout = () => {
         ) : null}
 
         <aside
-          className={`fixed inset-y-0 left-0 z-40 border-r border-white/10 bg-[#07101b] px-4 py-6 transition-all duration-300 lg:hidden ${
+          className={`fixed inset-y-0 left-0 z-40 border-r border-white/10 bg-[#07131b] px-4 py-6 transition-all duration-300 lg:hidden ${
             isExpanded ? "w-72" : "w-24"
           } ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
         >
@@ -136,7 +135,7 @@ const SellerLayout = () => {
         </aside>
 
         <aside
-          className={`hidden border-r border-white/10 bg-[#07101b] px-4 py-6 lg:block ${
+          className={`hidden border-r border-white/10 bg-[#07131b] px-4 py-6 lg:block ${
             isExpanded ? "w-72" : "w-24"
           }`}
         >
@@ -147,7 +146,7 @@ const SellerLayout = () => {
           <header className="rounded-[2rem] border border-white/10 bg-white/5 px-4 py-4 shadow-2xl shadow-slate-950/20 backdrop-blur sm:px-6 sm:py-5">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-emerald-300">Seller Portal</p>
+                <p className="text-sm uppercase tracking-[0.35em] text-teal-300">Seller Portal</p>
                 <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">{pageTitle}</h1>
                 <p className="mt-2 text-sm text-slate-400">
                   Manage products, pricing, offers, payments, orders, and shipments.

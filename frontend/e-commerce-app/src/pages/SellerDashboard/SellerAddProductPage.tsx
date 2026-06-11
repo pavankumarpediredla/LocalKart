@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PRODUCT_API_URL } from "./sellerApi";
 
 const emptyForm = {
@@ -16,6 +16,21 @@ const SellerAddProductPage = () => {
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+
+  useEffect(() => {
+    if (!imageFile) {
+      setImagePreviewUrl("");
+      return;
+    }
+
+    const previewUrl = URL.createObjectURL(imageFile);
+    setImagePreviewUrl(previewUrl);
+
+    return () => {
+      URL.revokeObjectURL(previewUrl);
+    };
+  }, [imageFile]);
 
   const handleAddProduct = async () => {
     try {
@@ -62,7 +77,7 @@ const SellerAddProductPage = () => {
   return (
     <article className="rounded-[2rem] border border-white/10 bg-white/5 p-5 sm:p-6">
       <p className="text-lg font-semibold">Add product</p>
-      <p className="mt-1 text-sm text-slate-400">Upload product details, stock, price, and image from your device.</p>
+      <p className="mt-1 text-sm text-slate-400">Upload product details, price, stock, and an image from your device.</p>
 
       {message ? <div className="mt-5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">{message}</div> : null}
       {error ? <div className="mt-5 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">{error}</div> : null}
@@ -93,6 +108,18 @@ const SellerAddProductPage = () => {
           <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} className="hidden" />
           <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs text-emerald-300">Browse</span>
         </label>
+
+        {imagePreviewUrl ? (
+          <div className="md:col-span-2">
+            <div className="overflow-hidden rounded-3xl border border-white/10 bg-slate-950/60">
+              <img
+                src={imagePreviewUrl}
+                alt="Selected product preview"
+                className="h-56 w-full object-cover"
+              />
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-5 flex justify-end">

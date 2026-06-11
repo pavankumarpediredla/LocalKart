@@ -20,15 +20,80 @@ import SellerOrdersPage from "./pages/SellerDashboard/SellerOrdersPage";
 import SellerShipmentPage from "./pages/SellerDashboard/SellerShipmentPage";
 import SellerAccountPage from "./pages/SellerDashboard/SellerAccountPage";
 import SellerSettingsPage from "./pages/SellerDashboard/SellerSettingsPage";
+import CartPage from "./pages/Customer/CartPage";
+import WishlistPage from "./pages/Customer/WishlistPage";
+import ProductDetailsPage from "./pages/Customer/ProductDetailsPage";
+import OrdersPage from "./pages/Customer/OrdersPage";
+import { RedirectIfAuthenticated, RequireAuth } from "./components/RouteGuards";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/seller" element={<SellerDashboard />}>
+        <Route
+          path="/"
+          element={
+            <RedirectIfAuthenticated>
+              <Login />
+            </RedirectIfAuthenticated>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <RedirectIfAuthenticated>
+              <Login />
+            </RedirectIfAuthenticated>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <RequireAuth allowedRoles={["customer", "buyer"]}>
+              <Dashboard />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <RequireAuth allowedRoles={["customer", "buyer"]}>
+              <CartPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/wishlist"
+          element={
+            <RequireAuth allowedRoles={["customer", "buyer"]}>
+              <WishlistPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/products/:productId"
+          element={
+            <RequireAuth allowedRoles={["customer", "buyer"]}>
+              <ProductDetailsPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <RequireAuth allowedRoles={["customer", "buyer"]}>
+              <OrdersPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/seller"
+          element={
+            <RequireAuth allowedRoles={["seller"]}>
+              <SellerDashboard />
+            </RequireAuth>
+          }
+        >
           <Route index element={<Navigate to="/seller/dashboard" replace />} />
           <Route path="dashboard" element={<SellerDashboardPage />} />
           <Route path="products/add" element={<SellerAddProductPage />} />
@@ -42,7 +107,14 @@ function App() {
           <Route path="account" element={<SellerAccountPage />} />
           <Route path="settings" element={<SellerSettingsPage />} />
         </Route>
-        <Route path="/admin" element={<AdminDashboard />}>
+        <Route
+          path="/admin"
+          element={
+            <RequireAuth allowedRoles={["admin"]}>
+              <AdminDashboard />
+            </RequireAuth>
+          }
+        >
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminOverviewPage />} />
           <Route path="users/create" element={<AdminCreateUserPage />} />
